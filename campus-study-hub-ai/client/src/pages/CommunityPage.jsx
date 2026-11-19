@@ -1,0 +1,16 @@
+import { useEffect, useState } from 'react';
+import { Search, SlidersHorizontal, Bookmark, Compass } from 'lucide-react';
+import { api, getErrorMessage } from '../services/api';
+import NoteCard from '../components/NoteCard';
+import EmptyState from '../components/EmptyState';
+export default function CommunityPage() {
+  const [notes,setNotes]=useState([]); const [loading,setLoading]=useState(true); const [error,setError]=useState(''); const [q,setQ]=useState(''); const [subject,setSubject]=useState(''); const [semester,setSemester]=useState(''); const [sort,setSort]=useState('popular'); const [saved,setSaved]=useState(new Set());
+  const load=()=>{setLoading(true);const params={q,subject,semester,sort};Object.keys(params).forEach(k=>!params[k]&&delete params[k]);api.get('/notes/community',{params}).then(({data})=>setNotes(data.notes)).catch(e=>setError(getErrorMessage(e))).finally(()=>setLoading(false));};
+  useEffect(()=>{const t=setTimeout(load,250);return()=>clearTimeout(t);},[q,subject,semester,sort]);
+  async function bookmark(id){try{const {data}=await api.post(`/notes/${id}/bookmark`);setSaved(p=>{const n=new Set(p);data.bookmarked?n.add(id):n.delete(id);return n;});}catch(e){setError(getErrorMessage(e));}}
+  return <div className="page-stack"><div className="page-heading"><div><span className="eyebrow">LEARN TOGETHER</span><h1>Community resources</h1><p>Find useful notes, share knowledge and learn from your campus community.</p></div><div className="community-count"><Compass size={19}/><strong>{notes.length}</strong><span>resources found</span></div></div>
+    <div className="community-search"><div className="community-search-icon"><Search size={21}/></div><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search notes, subjects, topics or tags…"/><button className="button button-primary" onClick={load}>Search</button></div>
+    <div className="toolbar community-toolbar"><div className="filter-control"><SlidersHorizontal size={16}/><select value={subject} onChange={e=>setSubject(e.target.value)}><option value="">All subjects</option>{[...new Set(notes.map(n=>n.subject))].sort().map(s=><option key={s}>{s}</option>)}</select></div><div className="filter-control"><select value={semester} onChange={e=>setSemester(e.target.value)}><option value="">All semesters</option>{Array.from({length:12},(_,i)=><option key={i+1} value={i+1}>Semester {i+1}</option>)}</select></div><div className="filter-control"><select value={sort} onChange={e=>setSort(e.target.value)}><option value="popular">Most popular</option><option value="recent">Recently added</option><option value="downloads">Most downloaded</option><option value="rating">Highest rated</option></select></div><span className="result-count">Verified public resources</span></div>
+    {error&&<div className="inline-error">{error}</div>}{loading?<div className="page-loader"><span className="spinner"/>Finding useful resources…</div>:notes.length?<div className="note-grid">{notes.map(note=><NoteCard key={note._id} note={note} onBookmark={bookmark} bookmarked={saved.has(note._id)}/>)}</div>:<EmptyState title="No resources found" text="Try a broader search or another semester. Your next useful note might be just around the corner."/>}
+  </div>;
+}

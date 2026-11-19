@@ -1,0 +1,12 @@
+const router = require('express').Router();
+const controller = require('../controllers/profile.controller');
+const { protect } = require('../middlewares/auth');
+router.get('/dashboard', protect, controller.dashboard);
+router.post('/study-session', protect, controller.studySession);
+router.get('/leaderboard', protect, controller.leaderboard);
+router.get('/notifications', protect, controller.notifications);
+router.patch('/notifications/:id/read', protect, controller.markNotificationRead);
+router.patch('/me', protect, controller.updateProfile);
+router.post('/:id/follow', protect, controller.follow);
+router.get('/:id', protect, controller.getProfile);
+module.exports = router;

@@ -1,0 +1,13 @@
+const router = require('express').Router();
+const controller = require('../controllers/auth.controller');
+const { protect } = require('../middlewares/auth');
+const validate = require('../middlewares/validate');
+const { registerSchema, loginSchema } = require('../utils/validators');
+router.post('/register', validate(registerSchema), controller.register);
+router.post('/login', validate(loginSchema), controller.login);
+router.post('/refresh', controller.refresh);
+router.post('/logout', controller.logout);
+router.get('/me', protect, controller.me);
+router.post('/forgot-password', controller.forgotPassword);
+router.post('/reset-password', controller.resetPassword);
+module.exports = router;

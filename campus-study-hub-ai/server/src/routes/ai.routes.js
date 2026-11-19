@@ -1,0 +1,17 @@
+const router = require('express').Router();
+const controller = require('../controllers/ai.controller');
+const { protect } = require('../middlewares/auth');
+router.use(protect);
+router.post('/recommendations', controller.recommendations);
+router.post('/notes/:noteId/summary', controller.summary);
+router.post('/notes/:noteId/explain', controller.explain);
+router.post('/notes/:noteId/chat', controller.chat);
+router.get('/notes/:noteId/chats', controller.chatHistory);
+router.post('/notes/:noteId/quiz', controller.generateQuiz);
+router.post('/notes/:noteId/flashcards', controller.generateFlashcards);
+router.post('/notes/:noteId/important-topics', controller.importantTopics);
+router.get('/quizzes', controller.myQuizzes);
+router.post('/quizzes/:id/submit', controller.submitQuiz);
+router.get('/flashcards', controller.myFlashcards);
+router.delete('/flashcards/:id', controller.deleteFlashcards);
+module.exports = router;

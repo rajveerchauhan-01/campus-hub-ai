@@ -1,0 +1,11 @@
+const router = require('express').Router();
+const controller = require('../controllers/community.controller');
+const admin = require('../controllers/admin.controller');
+const { protect } = require('../middlewares/auth');
+router.get('/notes/:noteId/comments', controller.listComments);
+router.post('/notes/:noteId/comments', protect, controller.addComment);
+router.delete('/comments/:id', protect, controller.deleteComment);
+router.get('/notes/:noteId/ratings', controller.getRatings);
+router.post('/notes/:noteId/ratings', protect, controller.rateNote);
+router.post('/notes/:noteId/report', protect, admin.reportNote);
+module.exports = router;

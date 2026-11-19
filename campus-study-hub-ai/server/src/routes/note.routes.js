@@ -1,0 +1,17 @@
+const router = require('express').Router();
+const controller = require('../controllers/note.controller');
+const { protect } = require('../middlewares/auth');
+const { upload } = require('../middlewares/upload');
+const validate = require('../middlewares/validate');
+const { noteSchema } = require('../utils/validators');
+router.use(protect);
+router.get('/community', controller.community);
+router.get('/mine', controller.myNotes);
+router.get('/bookmarks', controller.bookmarks);
+router.post('/', upload.single('file'), validate(noteSchema), controller.create);
+router.get('/:id/download', controller.download);
+router.post('/:id/bookmark', controller.bookmark);
+router.get('/:id', controller.getById);
+router.patch('/:id', upload.single('file'), controller.update);
+router.delete('/:id', controller.remove);
+module.exports = router;

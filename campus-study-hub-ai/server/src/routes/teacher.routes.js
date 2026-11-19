@@ -1,0 +1,11 @@
+const router = require('express').Router();
+const controller = require('../controllers/teacher.controller');
+const { protect, allowRoles } = require('../middlewares/auth');
+router.use(protect);
+router.get('/assignments', controller.listAssignments);
+router.get('/notes/pending', allowRoles('teacher', 'admin'), controller.pendingNotes);
+router.patch('/notes/:id/verify', allowRoles('teacher', 'admin'), controller.verifyNote);
+router.post('/assignments', allowRoles('teacher', 'admin'), controller.createAssignment);
+router.patch('/assignments/:id', allowRoles('teacher', 'admin'), controller.updateAssignment);
+router.delete('/assignments/:id', allowRoles('teacher', 'admin'), controller.deleteAssignment);
+module.exports = router;

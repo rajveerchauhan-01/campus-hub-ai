@@ -1,0 +1,12 @@
+const router = require('express').Router();
+const controller = require('../controllers/admin.controller');
+const { protect, allowRoles } = require('../middlewares/auth');
+router.use(protect, allowRoles('admin'));
+router.get('/analytics', controller.analytics);
+router.get('/users', controller.listUsers);
+router.patch('/users/:id', controller.updateUser);
+router.get('/notes/pending', controller.pendingNotes);
+router.patch('/notes/:id/verification', controller.verifyNote);
+router.get('/reports', controller.listReports);
+router.patch('/reports/:id', controller.resolveReport);
+module.exports = router;
